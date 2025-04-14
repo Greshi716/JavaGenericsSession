@@ -8,8 +8,7 @@ public class CookieAuth extends BasicAuthAuthenticator{
         super(logger);
     }
 
-    @Override
-    public void retryOnFailure(Credentials credentials, int maxAttempts) {
+    public void retryOnFailure(BasicAuthCredentials credentials, int maxAttempts) {
         for (int i = 0; i < maxAttempts; i++) {
             logger.log(credentials.toString());
             if (authenticate(credentials)) {

@@ -1,7 +1,7 @@
 package authentication;
 
-public interface Authenticator {
-    boolean authenticate(final Credentials credentials);
+public interface Authenticator<T extends  Credentials> {
+    boolean authenticate(final T credentials);
 
-    void retryOnFailure(Credentials credentials, int maxAttempts);
+    void retryOnFailure(T credentials, int maxAttempts);
 }

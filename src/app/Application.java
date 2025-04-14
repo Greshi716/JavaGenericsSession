@@ -6,59 +6,53 @@ import logging.Logger;
 import java.util.Scanner;
 
 public class Application {
+
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter authentication type (basic / oauth): ");
-        final String authType = scanner.nextLine();
+        Logger logger = new Logger();
 
-        Credentials credentials;
-        Authenticator authenticator;
+        System.out.println("Enter authentication type (basic / oauth / cookie): ");
+        final String authType = scanner.nextLine();
 
         if ("basic".equalsIgnoreCase(authType)) {
             System.out.println("Enter username: ");
             final String username = scanner.nextLine();
-
             System.out.println("Enter password: ");
             final String password = scanner.nextLine();
 
-            credentials = new BasicAuthCredentials(username, password);
-            authenticator = new BasicAuthAuthenticator(new Logger());
+            final BasicAuthCredentials credentials = new BasicAuthCredentials(username, password);
+            final Authenticator<BasicAuthCredentials> authenticator = new BasicAuthAuthenticator(logger);
+
+            processAuthentication(authenticator, credentials);
 
         } else if ("oauth".equalsIgnoreCase(authType)) {
             System.out.println("Enter OAuth token: ");
             final String token = scanner.nextLine();
 
-            credentials = new OAuthCredentials(token);
-            authenticator = new OAuthAuthenticator(new Logger());
+            final OAuthCredentials credentials = new OAuthCredentials(token);
+            final Authenticator<OAuthCredentials> authenticator = new OAuthAuthenticator(logger);
+
+            processAuthentication(authenticator, credentials);
 
         } else {
             System.out.println("Unsupported authentication type.");
-            return;
         }
 
-        boolean isAuthenticated;
+        scanner.close();
+    }
 
-        if (credentials instanceof BasicAuthCredentials) {
-            isAuthenticated = authenticator.authenticate(credentials);
-            if (!isAuthenticated) {
-                System.out.println("Basic Authentication failed. Retrying...");
-                authenticator.retryOnFailure(credentials, 3);
-            }
-        } else {
-            isAuthenticated = authenticator.authenticate(credentials);
-            if (!isAuthenticated) {
-                System.out.println("OAuth Authentication failed. Retrying...");
-                authenticator.retryOnFailure(credentials, 3);
-            }
+    private static <T extends Credentials> void processAuthentication(Authenticator<T> authenticator, T credentials) {
+        final boolean isAuthenticated = authenticator.authenticate(credentials);
+
+        if (!isAuthenticated) {
+            System.out.println("Authentication failed. Retrying...");
+            authenticator.retryOnFailure(credentials, 3);
         }
-
-        if (isAuthenticated) {
+        if (authenticator.authenticate(credentials)) {
             System.out.println("Authentication succeeded.");
         } else {
             System.out.println("Authentication failed after retries.");
         }
-
-        scanner.close();
     }
 }

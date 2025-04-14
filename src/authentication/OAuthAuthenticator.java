@@ -2,7 +2,7 @@ package authentication;
 
 import logging.Logger;
 
-public class OAuthAuthenticator implements Authenticator {
+public class OAuthAuthenticator implements Authenticator<OAuthCredentials> {
 
     public static final String VALID_OAUTH_TOKEN = "validOAuthToken";
     private final Logger logger;
@@ -12,17 +12,16 @@ public class OAuthAuthenticator implements Authenticator {
     }
 
     @Override
-    public boolean authenticate(Credentials credentials) {
-        if (credentials instanceof OAuthCredentials oauth) {
-            final boolean success = VALID_OAUTH_TOKEN.equals(oauth.getToken());
-            System.out.println(success ? "OAuth Auth Success" : "OAuth Auth Failed");
-            return success;
-        }
-        return false;
+    public boolean authenticate(OAuthCredentials oAuthCredentials) {
+
+        final boolean success = VALID_OAUTH_TOKEN.equals(oAuthCredentials.getToken());
+        System.out.println(success ? "OAuth Auth Success" : "OAuth Auth Failed");
+        return success;
     }
 
     @Override
-    public void retryOnFailure(Credentials credentials, int maxAttempts) {
+    public void retryOnFailure(OAuthCredentials credentials, int maxAttempts) {
+
         for (int i = 0; i < maxAttempts; i++) {
             this.logger.log("Retrying... Attempt " + (i + 1));
             if (authenticate(credentials)) {

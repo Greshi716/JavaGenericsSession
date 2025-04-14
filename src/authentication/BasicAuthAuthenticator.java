@@ -2,7 +2,7 @@ package authentication;
 
 import logging.Logger;
 
-public class BasicAuthAuthenticator implements Authenticator {
+public class BasicAuthAuthenticator implements Authenticator<BasicAuthCredentials> {
 
     public static final String VALID_USER_NAME = "basicUser";
     public static final String VALID_PASSWORD = "validPassword";
@@ -13,18 +13,15 @@ public class BasicAuthAuthenticator implements Authenticator {
     }
 
     @Override
-    public boolean authenticate(Credentials credentials) {
-        if (credentials instanceof BasicAuthCredentials basic) {
-            final boolean success = VALID_USER_NAME.equals(basic.getUsername()) &&
-                    VALID_PASSWORD.equals(basic.getPassword());
-            this.logger.log(success ? "Basic Auth Success" : " Basic Auth Failed");
-            return success;
-        }
-        return false;
+    public boolean authenticate(BasicAuthCredentials basicAuthCredentials) {
+        final boolean success = VALID_USER_NAME.equals(basicAuthCredentials.getUsername()) &&
+                VALID_PASSWORD.equals(basicAuthCredentials.getPassword());
+        this.logger.log(success ? "Basic Auth Success" : " Basic Auth Failed");
+        return success;
     }
 
     @Override
-    public void retryOnFailure(Credentials credentials, int maxAttempts) {
+    public void retryOnFailure(BasicAuthCredentials credentials, int maxAttempts) {
         for (int i = 0; i < maxAttempts; i++) {
             this.logger.log("Retrying... Attempt " + (i + 1));
             if (authenticate(credentials)) {
