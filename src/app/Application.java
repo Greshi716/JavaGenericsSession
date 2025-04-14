@@ -22,7 +22,7 @@ public class Application {
             final String password = scanner.nextLine();
 
             final BasicAuthCredentials credentials = new BasicAuthCredentials(username, password);
-            final Authenticator<BasicAuthCredentials> authenticator = new BasicAuthAuthenticator(logger);
+            final CoreAuthenticator<BasicAuthCredentials> authenticator = new BasicAuthAuthenticator(logger);
 
             processAuthentication(authenticator, credentials);
 
@@ -31,7 +31,7 @@ public class Application {
             final String token = scanner.nextLine();
 
             final OAuthCredentials credentials = new OAuthCredentials(token);
-            final Authenticator<OAuthCredentials> authenticator = new OAuthAuthenticator(logger);
+            final CoreAuthenticator<OAuthCredentials> authenticator = new OAuthAuthenticator(logger);
 
             processAuthentication(authenticator, credentials);
 
@@ -42,7 +42,7 @@ public class Application {
         scanner.close();
     }
 
-    private static <T extends Credentials> void processAuthentication(Authenticator<T> authenticator, T credentials) {
+    private static <T extends Credentials> void processAuthentication(CoreAuthenticator<T> authenticator, T credentials) {
         final boolean isAuthenticated = authenticator.authenticate(credentials);
 
         if (!isAuthenticated) {
@@ -55,4 +55,5 @@ public class Application {
             System.out.println("Authentication failed after retries.");
         }
     }
+
 }

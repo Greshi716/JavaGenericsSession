@@ -2,7 +2,7 @@ package authentication;
 
 import logging.Logger;
 
-public class OAuthAuthenticator implements Authenticator<OAuthCredentials> {
+public class OAuthAuthenticator extends CoreAuthenticator<OAuthCredentials> {
 
     public static final String VALID_OAUTH_TOKEN = "validOAuthToken";
     private final Logger logger;
@@ -19,14 +19,4 @@ public class OAuthAuthenticator implements Authenticator<OAuthCredentials> {
         return success;
     }
 
-    @Override
-    public void retryOnFailure(OAuthCredentials credentials, int maxAttempts) {
-
-        for (int i = 0; i < maxAttempts; i++) {
-            this.logger.log("Retrying... Attempt " + (i + 1));
-            if (authenticate(credentials)) {
-                break;
-            }
-        }
-    }
 }

@@ -2,7 +2,7 @@ package authentication;
 
 import logging.Logger;
 
-public class BasicAuthAuthenticator implements Authenticator<BasicAuthCredentials> {
+public class BasicAuthAuthenticator extends CoreAuthenticator<BasicAuthCredentials> {
 
     public static final String VALID_USER_NAME = "basicUser";
     public static final String VALID_PASSWORD = "validPassword";
@@ -20,13 +20,4 @@ public class BasicAuthAuthenticator implements Authenticator<BasicAuthCredential
         return success;
     }
 
-    @Override
-    public void retryOnFailure(BasicAuthCredentials credentials, int maxAttempts) {
-        for (int i = 0; i < maxAttempts; i++) {
-            this.logger.log("Retrying... Attempt " + (i + 1));
-            if (authenticate(credentials)) {
-                break;
-            }
-        }
-    }
 }
