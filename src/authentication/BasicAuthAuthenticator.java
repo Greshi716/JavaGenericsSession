@@ -6,7 +6,7 @@ public class BasicAuthAuthenticator implements Authenticator {
 
     public static final String VALID_USER_NAME = "basicUser";
     public static final String VALID_PASSWORD = "validPassword";
-    private final Logger logger;
+    protected final Logger logger;
 
     public BasicAuthAuthenticator(Logger logger) {
         this.logger = logger;
